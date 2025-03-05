@@ -406,7 +406,7 @@ class ShortestPathApp:
             if not edge_data.empty:
                 # Calculate accessibility level
                 access_level = 5
-                if edge_data['road_width'].values[0] < 3:
+                if edge_data['road_width'].values[0] > 3:
                     access_level -= 1
                 if edge_data['smoothness'].values[0] in ["excellent", "good"]:
                     access_level -= 1
