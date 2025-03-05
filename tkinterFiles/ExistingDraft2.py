@@ -295,7 +295,7 @@ class ShortestPathApp:
                     
                     # Modified accessibility calculation
                     access_level = 1
-                    if (edge_data['road_width'].values[0] < 3 and 
+                    if (edge_data['road_width'].values[0] > 3 and 
                         edge_data['smoothness'].values[0] not in ["excellent", "good"] and 
                         edge_data['surface'].values[0] not in ["asphalt", "concrete"] and 
                         edge_data['slope'].values[0] not in ["flat", "gentle"]):

@@ -81,7 +81,7 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
         for u, v in zip(path, path[1:]):
             edge_data = edge_data_dict[(u, v)]
             access_level = 1
-            if edge_data['road_width'] < 3 and edge_data['smoothness'] not in ["excellent", "good"] and edge_data['surface'] not in ["asphalt", "concrete"] and edge_data['slope'] not in ["flat", "gentle"]:
+            if edge_data['road_width'] > 3 and edge_data['smoothness'] not in ["excellent", "good"] and edge_data['surface'] not in ["asphalt", "concrete"] and edge_data['slope'] not in ["flat", "gentle"]:
                 access_level = 5
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
         rp_list.append(rp)
@@ -108,21 +108,21 @@ def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data
         for u, v in zip(path, path[1:]):
             edge_data = edge_data_dict[(u, v)]
             access_level = 5
-            if edge_data['road_width'] < 3:
+            if edge_data['road_width'] > 3:
                 access_level -= 1
-            if edge_data['smoothness'] not in ["excellent", "good"]:
+            if edge_data['smoothness'] in ["excellent", "good"]:
                 access_level -= 1
-            if edge_data['surface'] not in ["asphalt", "concrete"]:
+            if edge_data['surface'] in ["asphalt", "concrete"]:
                 access_level -= 1
-            if edge_data['slope'] not in ["flat", "gentle"]:
+            if edge_data['slope'] in ["flat", "gentle"]:
                 access_level -= 1
 
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
 
         # Push to min-heap
         heapq.heappush(heap, (rp, path_distance, path))  
-        # path_df = pd.DataFrame(heap, columns = ['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
-    # print(path_df)
+        path_df = pd.DataFrame(heap, columns = ['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
+    print(path_df)
     return heap
 
 selected_csv = 'test_data1.csv'
