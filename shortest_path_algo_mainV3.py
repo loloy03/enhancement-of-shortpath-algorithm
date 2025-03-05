@@ -63,7 +63,6 @@ def get_shortest_paths(selected_csv, selected_source, selected_destination, sele
 
 def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Line 21 to 25
-    start_time_path_calc = time.perf_counter()
     path_distance_list = []
     p_copy = p.copy()
     for i in range(len(p_copy)):
@@ -73,13 +72,9 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
             continue  
         path_distance_list.append(path_distance)
     path_distance_list.reverse()
-    end_time_path_calc = time.perf_counter()
-    print(f"1st Loop Execution Time (Existing): {(end_time_path_calc - start_time_path_calc) * 1000:.2f} ms")
-
 
     # Line 26 to 29
     # Compute penalty
-    start_time_path_calc = time.perf_counter()
     rp_list = []
     for path in p:
         rp = 0
@@ -90,8 +85,6 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
                 access_level = 5
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
         rp_list.append(rp)
-    end_time_path_calc = time.perf_counter()
-    print(f"2nd Loop Execution Time(Existing): {(end_time_path_calc - start_time_path_calc) * 1000:.2f} ms")
 
     zipped_list = list(zip(p, path_distance_list, rp_list))
 
@@ -104,7 +97,6 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
 
 def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Initialize lists
-    start_time_path_calc = time.perf_counter()
     heap = []  # Min-heap for sorting based on 'Calculated Weight'
     for path in p:
         path_distance = nx.path_weight(G, path, weight='Actual Length')
@@ -130,8 +122,6 @@ def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data
         # Push to min-heap
         heapq.heappush(heap, (rp, path_distance, path))  
         # path_df = pd.DataFrame(heap, columns = ['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
-    end_time_path_calc = time.perf_counter()
-    print(f"Combing Loop xecution Time in Proposed: {(end_time_path_calc - start_time_path_calc) * 1000:.2f} ms")
     # print(path_df)
     return heap
 
