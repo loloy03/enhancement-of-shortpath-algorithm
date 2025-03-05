@@ -296,11 +296,11 @@ class ShortestPathApp:
                     access_level = 5
                     if edge_data.get('road_width', 0) < 3:
                         access_level -= 1
-                    if edge_data.get('smoothness', '') not in ["excellent", "good"]:
+                    if edge_data.get('smoothness', '') in ["excellent", "good"]:
                         access_level -= 1
-                    if edge_data.get('surface', '') not in ["asphalt", "concrete"]:
+                    if edge_data.get('surface', '') in ["asphalt", "concrete"]:
                         access_level -= 1
-                    if edge_data.get('slope', '') not in ["flat", "gentle"]:
+                    if edge_data.get('slope', '') in ["flat", "gentle"]:
                         access_level -= 1
                     
                     # Calculate penalty using edge length, access level, and bike lane
@@ -408,11 +408,11 @@ class ShortestPathApp:
                 access_level = 5
                 if edge_data['road_width'].values[0] < 3:
                     access_level -= 1
-                if edge_data['smoothness'].values[0] not in ["excellent", "good"]:
+                if edge_data['smoothness'].values[0] in ["excellent", "good"]:
                     access_level -= 1
-                if edge_data['surface'].values[0] not in ["asphalt", "concrete"]:
+                if edge_data['surface'].values[0] in ["asphalt", "concrete"]:
                     access_level -= 1
-                if edge_data['slope'].values[0] not in ["flat", "gentle"]:
+                if edge_data['slope'].values[0] in ["flat", "gentle"]:
                     access_level -= 1
                     
                 edge_info = [
