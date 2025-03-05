@@ -110,11 +110,11 @@ def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data
             access_level = 5
             if edge_data['road_width'] < 3:
                 access_level -= 1
-            if edge_data['smoothness'] not in ["excellent", "good"]:
+            if edge_data['smoothness'] in ["excellent", "good"]:
                 access_level -= 1
-            if edge_data['surface'] not in ["asphalt", "concrete"]:
+            if edge_data['surface'] in ["asphalt", "concrete"]:
                 access_level -= 1
-            if edge_data['slope'] not in ["flat", "gentle"]:
+            if edge_data['slope'] in ["flat", "gentle"]:
                 access_level -= 1
 
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
