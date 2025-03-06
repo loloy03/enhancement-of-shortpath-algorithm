@@ -62,7 +62,9 @@ def get_shortest_paths(selected_csv, selected_source, selected_destination, sele
     #     calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict)
 
 def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
-    # Line 21 to 25
+    # Start tracking memory
+    tracemalloc.start()
+    
     path_distance_list = []
     p_copy = p.copy()
     for i in range(len(p_copy)):
@@ -73,13 +75,6 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
         path_distance_list.append(path_distance)
     path_distance_list.reverse()
 
-    #start of tracking memory
-    start_time_existing_memory_tracking = time.perf_counter()
-    tracemalloc.start()
-    current_existing_initial, peak_exisitng_exisiting_initial = tracemalloc.get_traced_memory()
-
-    # Line 26 to 29
-    # Compute penalty
     rp_list = []
     for path in p:
         rp = 0
@@ -91,26 +86,31 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
         rp_list.append(rp)
 
+    # Track memory usage before creating zipped_list
+    current_mem1, peak_mem1 = tracemalloc.get_traced_memory()
     zipped_list = list(zip(p, path_distance_list, rp_list))
+    current_mem2, peak_mem2 = tracemalloc.get_traced_memory()
 
-    # Line 30
+    # Track memory usage before creating sorted_list
+    current_mem3, peak_mem3 = tracemalloc.get_traced_memory()
     sorted_list = sorted(zipped_list, key=lambda x: x[2])
+    current_mem4, peak_mem4 = tracemalloc.get_traced_memory()
 
-    #end of tracking memory
-    end_time_existing_memory_tracking = time.perf_counter()
-    current_existing, peak_existing = tracemalloc.get_traced_memory()
+    # Print memory usage
+    print("-------------------------------------------")
+    print("Memory Usage for zipped_list:")
+    print(f"Current memory usage: {current_mem2 - current_mem1} Bytes")
+    print(f"Peak memory usage: {peak_mem2 - peak_mem1} Bytes")
+    print("-------------------------------------------")
+
+    print("Memory Usage for sorted_list:")
+    print(f"Current memory usage: {current_mem4 - current_mem3} Bytes")
+    print(f"Peak memory usage: {peak_mem4 - peak_mem3} Bytes")
+    print("-------------------------------------------")
+
     tracemalloc.stop()
 
-    print("-------------------------------------------")
-    print("Existing Algorithm")
-    print(f"Initial memory usage : {current_existing_initial / 10**3:.2f} KB")
-    print(f"Memory usage after execution: {current_existing / 10**3:.2f} KB")
-    print(f"Peak memory usage: {peak_existing / 10**3:.2f} KB")
-    print(f"Execution time: {(end_time_existing_memory_tracking - start_time_existing_memory_tracking) * 1000:.2f} ms")
-    print("-------------------------------------------")
-
-    path_df = pd.DataFrame(sorted_list, columns = ['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
-    # print(path_df)
+    path_df = pd.DataFrame(sorted_list, columns=['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
     return sorted_list
 
 

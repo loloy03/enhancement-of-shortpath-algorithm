@@ -9,6 +9,8 @@ import random
 
 import pandas as pd
 
+import gc
+
 # Initialize K shortest path function
 def k_shortest_paths(G, source, target, k, weight):
     return list(
@@ -64,8 +66,7 @@ def get_shortest_paths(selected_csv, selected_source, selected_destination, sele
 def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Line 21 to 25
     # start_time_first_loop = time.perf_counter()
-    tracemalloc.start()
-    
+    # tracemalloc.start()
     path_distance_list = []
     p_copy = p.copy()
     for i in range(len(p_copy)):
@@ -98,42 +99,20 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
     # end_time_second_loop = time.perf_counter()
     # print(f"2nd Loop Execution time: {(end_time_second_loop - start_time_second_loop) * 1000:.2f} ms")
     # tracemalloc.stop()
-    
-    # Track memory usage before creating zipped_list
-    current_mem1, peak_mem1 = tracemalloc.get_traced_memory()
+
     zipped_list = list(zip(p, path_distance_list, rp_list))
-    current_mem2, peak_mem2 = tracemalloc.get_traced_memory()
 
     # Line 30
-    # Track memory usage before creating sorted_list
-    current_mem3, peak_mem3 = tracemalloc.get_traced_memory()
     sorted_list = sorted(zipped_list, key=lambda x: x[2]).copy()
-    current_mem4, peak_mem4 = tracemalloc.get_traced_memory()
     
-        # Print memory usage
-    print("-------------------------------------------")
-    print("Memory Usage for zipped_list:")
-    print(f"Current memory usage: {current_mem2 - current_mem1} Bytes")
-    print(f"Peak memory usage: {peak_mem2 - peak_mem1} Bytes")
-    print("-------------------------------------------")
-
-    print("Memory Usage for sorted_list:")
-    print(f"Current memory usage: {current_mem4 - current_mem3} Bytes")
-    print(f"Peak memory usage: {peak_mem4 - peak_mem3} Bytes")
-    print("-------------------------------------------")
-    
-    tracemalloc.stop()
-    
-    path_df = pd.DataFrame(sorted_list, columns = ['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
+    # path_df = pd.DataFrame(sorted_list, columns = ['Alternative Paths', 'Actual Distance', 'Calculated Weight'])
     # print(avgEdgeLength)
-    print(path_df)
+    # print(path_df)
     return sorted_list
 
 def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Initialize lists
-    # start_time_combined_loop = time.perf_counter()
-    
-    # Start tracking memory
+    start_time_combined_loop = time.perf_counter()
     tracemalloc.start()
     heap = []  # Min-heap for sorting based on 'Calculated Weight'
     for path in p:
@@ -158,24 +137,9 @@ def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
 
         # Push to min-heap
-        heapq.heappush(heap, (rp, path_distance, path))  
-        
-    current_mem1_proposed, peak_mem1_proposed = tracemalloc.get_traced_memory()
-    heap
-    current_mem2_proposed, peak_mem2_proposed = tracemalloc.get_traced_memory()
-    
-    # print(zipped_list)
-        
-    # end_time_combined_loop = time.perf_counter()
-    # print(f"Combined Loop Execution time: {(end_time_combined_loop - start_time_combined_loop) * 1000:.2f} ms")
-    
-    # Print memory usage
-    print("-------------------------------------------")
-    print("Memory Usage for Heap Queue:")
-    print(f"Current memory usage: {current_mem2_proposed - current_mem1_proposed} Bytes")
-    print(f"Peak memory usage: {peak_mem2_proposed - peak_mem1_proposed} Bytes")
-    print("-------------------------------------------")
-    
+        heapq.heappush(heap, (rp, path_distance, path))
+    end_time_combined_loop = time.perf_counter()
+    print(f"Combined Loop Execution time: {(end_time_combined_loop - start_time_combined_loop) * 1000:.2f} ms")
     tracemalloc.stop()
     # path_df = pd.DataFrame(heap, columns = ['Calculated Weight', 'Actual Distance', 'Alternative Paths'])
     # print(path_df[['Alternative Paths', 'Actual Distance', 'Calculated Weight']])
