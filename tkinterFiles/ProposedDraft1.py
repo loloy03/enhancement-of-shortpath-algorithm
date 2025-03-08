@@ -19,7 +19,7 @@ def k_shortest_paths(G, source, target, k, weight):
 class ShortestPathApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Shortest Path Finder (Proposed Algorithm)")
+        self.root.title("Proposed Short Path Algortihm")
         self.root.geometry("1200x700")
         
         # # Add this line
