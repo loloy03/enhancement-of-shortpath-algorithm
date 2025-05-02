@@ -66,7 +66,6 @@ def get_shortest_paths(selected_csv, selected_source, selected_destination, sele
 def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Line 21 to 25
     start_time_first_loop = time.perf_counter()
-    tracemalloc.start()
     path_distance_list = []
     p_copy = p.copy()
     for i in range(len(p_copy)):
@@ -78,14 +77,13 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
     path_distance_list.reverse()
     end_time_first_loop = time.perf_counter()
     print(f"1st Loop Execution time: {(end_time_first_loop - start_time_first_loop) * 1000:.2f} ms")
-    tracemalloc.stop()
+
     
 
     # Line 26 to 29
     
     # Compute penalty
     start_time_second_loop = time.perf_counter()
-    tracemalloc.start()
     rp_list = []
     for path in p:
         rp = 0
@@ -98,7 +96,6 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
         rp_list.append(rp)
     end_time_second_loop = time.perf_counter()
     print(f"2nd Loop Execution time: {(end_time_second_loop - start_time_second_loop) * 1000:.2f} ms")
-    tracemalloc.stop()
 
     zipped_list = list(zip(p, path_distance_list, rp_list))
 
@@ -113,7 +110,6 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
 def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Initialize lists
     start_time_combined_loop = time.perf_counter()
-    tracemalloc.start()
     heap = []  # Min-heap for sorting based on 'Calculated Weight'
     for path in p:
         path_distance = nx.path_weight(G, path, weight='Actual Length')
@@ -140,7 +136,6 @@ def calculate_propose_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data
         heapq.heappush(heap, (rp, path_distance, path))
     end_time_combined_loop = time.perf_counter()
     print(f"Combined Loop Execution time: {(end_time_combined_loop - start_time_combined_loop) * 1000:.2f} ms")
-    tracemalloc.stop()
     # path_df = pd.DataFrame(heap, columns = ['Calculated Weight', 'Actual Distance', 'Alternative Paths'])
     # print(path_df[['Alternative Paths', 'Actual Distance', 'Calculated Weight']])
     return heap
@@ -186,16 +181,16 @@ tracemalloc.stop()
 
 
 
-print("-------------------------------------------")
+print("\n-------------------------------------------")
 print("Existing Algorithm")
 print(f"Initial memory usage : {current_existing_initial / 10**3:.2f} KB")
 print(f"Memory usage after execution: {current_existing / 10**3:.2f} KB")
-print(f"Peak memory usage: {peak_existing / 10**3:.2f} KB")
-print(f"Execution time: {(end_time_exisiting - start_time_existing) * 1000:.2f} ms")
-print("-------------------------------------------")
+# print(f"Peak memory usage: {peak_existing / 10**3:.2f} KB")
+# print(f"Execution time: {(end_time_exisiting - start_time_existing) * 1000:.2f} ms")
+print("\n-------------------------------------------")
 print("Propose Algorithm")
 print(f"Initial memory usage : {current_propose_initial / 10**3:.2f} KB")
 print(f"Memory usage after execution: {current_propose / 10**3:.2f} KB")
-print(f"Peak memory usage: {peak_propose / 10**3:.2f} KB")
-print(f"Execution time: {(end_time_propose - start_time_propose) * 1000:.2f} ms")
+# print(f"Peak memory usage: {peak_propose / 10**3:.2f} KB")
+# print(f"Execution time: {(end_time_propose - start_time_propose) * 1000:.2f} ms")
 print("-------------------------------------------")
