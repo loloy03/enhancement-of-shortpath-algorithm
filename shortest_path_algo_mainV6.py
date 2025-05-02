@@ -65,8 +65,8 @@ def get_shortest_paths(selected_csv, selected_source, selected_destination, sele
 
 def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_data_dict):
     # Line 21 to 25
-    # start_time_first_loop = time.perf_counter()
-    # tracemalloc.start()
+    start_time_first_loop = time.perf_counter()
+    tracemalloc.start()
     path_distance_list = []
     p_copy = p.copy()
     for i in range(len(p_copy)):
@@ -77,15 +77,15 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
         path_distance_list.append(path_distance)
     path_distance_list.reverse()
     end_time_first_loop = time.perf_counter()
-    # print(f"1st Loop Execution time: {(end_time_first_loop - start_time_first_loop) * 1000:.2f} ms")
-    # tracemalloc.stop()
+    print(f"1st Loop Execution time: {(end_time_first_loop - start_time_first_loop) * 1000:.2f} ms")
+    tracemalloc.stop()
     
 
     # Line 26 to 29
     
     # Compute penalty
-    # start_time_second_loop = time.perf_counter()
-    # tracemalloc.start()
+    start_time_second_loop = time.perf_counter()
+    tracemalloc.start()
     rp_list = []
     for path in p:
         rp = 0
@@ -96,9 +96,9 @@ def calculate_existing_algo(df, G, p, apLengthThreshold, avgEdgeLength, edge_dat
                 access_level = 1
             rp += G[u][v]['Actual Length'] * access_level + edge_data['bike_lane'] * avgEdgeLength
         rp_list.append(rp)
-    # end_time_second_loop = time.perf_counter()
-    # print(f"2nd Loop Execution time: {(end_time_second_loop - start_time_second_loop) * 1000:.2f} ms")
-    # tracemalloc.stop()
+    end_time_second_loop = time.perf_counter()
+    print(f"2nd Loop Execution time: {(end_time_second_loop - start_time_second_loop) * 1000:.2f} ms")
+    tracemalloc.stop()
 
     zipped_list = list(zip(p, path_distance_list, rp_list))
 
@@ -161,7 +161,7 @@ start_time_existing = time.perf_counter()
 tracemalloc.start()
 current_existing_initial, peak_exisitng_exisiting_initial = tracemalloc.get_traced_memory()
 
-print("Starting executions for 'existing' mode...\n")
+print("Starting executions for 'existing' mode...")
 for i, (selected_source, selected_destination) in enumerate(source_dest_pairs, start=1):
     print(f"Execution {i}: Mode=existing, Source={selected_source}, Destination={selected_destination}")
     get_shortest_paths(selected_csv, selected_source, selected_destination, "existing")
@@ -174,7 +174,8 @@ start_time_propose = time.perf_counter()
 tracemalloc.start()
 current_propose_initial, peak_propose_initial = tracemalloc.get_traced_memory()
 
-print("Starting executions for 'propose' mode...\n")
+
+print("\nStarting executions for 'propose' mode...")
 for i, (selected_source, selected_destination) in enumerate(source_dest_pairs, start=1):
     print(f"Execution {i}: Mode=propose, Source={selected_source}, Destination={selected_destination}")
     get_shortest_paths(selected_csv, selected_source, selected_destination, "propose")
